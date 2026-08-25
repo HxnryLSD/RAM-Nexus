@@ -43,7 +43,11 @@ public static class CrashLog
             lock (Gate)
             {
                 var sb = new StringBuilder();
-                sb.Append('[').Append(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")).Append("] ").AppendLine(context);
+                sb.Append('[').Append(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")).AppendLine("] RAM-Nexus");
+                // Identify the exact build: community reports must be attributable to a release.
+                sb.Append("  Version:  ")
+                  .AppendLine(typeof(CrashLog).Assembly.GetName().Version?.ToString(3) ?? "unknown");
+                sb.Append("  Context:  ").AppendLine(context);
                 if (ex is null)
                 {
                     sb.AppendLine("  (no exception details)");

@@ -56,7 +56,7 @@ src/
 ├── RAM.App           # WinUI 3 shell (NavigationView, custom title bar)
 │   ├── Views         # Accounts, Settings, Fast Flags, About
 │   └── Dialogs       # AddAccountDialog, UnlockDialog, PasswordDialog (password lock flow)
-└── RAM.Core.Tests    # xUnit — 125 tests (store, patcher, RDD, API, launcher, paths)
+└── RAM.Core.Tests    # xUnit — 127 tests (store, patcher, RDD, API, launcher, paths)
 ```
 
 Design rules:
@@ -78,7 +78,7 @@ Design rules:
 | Packaging | Unpackaged (`WindowsPackageType=None`), self-contained WASDK — no runtime install needed |
 | Platform | x64 only |
 | JSON | Newtonsoft.Json 13.0.3 |
-| Tests | xUnit 2.9.3 (125 tests, all green) |
+| Tests | xUnit 2.9.3 (127 tests, all green) |
 
 ## Building
 

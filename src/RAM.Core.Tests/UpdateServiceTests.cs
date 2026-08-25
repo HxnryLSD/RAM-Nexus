@@ -21,6 +21,51 @@ public class UpdateServiceTests
                 new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(json) })));
 
     [Fact]
+    public async Task CheckAsync_SendsUserAgent_GitHubApiRequiresIt()
+    {
+        // GitHub's API rejects UA-less clients with 403 — which CheckAsync used to swallow
+        // as "no update", silently disabling auto-update forever. Pin the header.
+        string? seenUserAgent = null;
+        var service = new UpdateService(
+            manifestUrl: "https://example.com/api/releases/latest",
+            http: new HttpClient(new FakeHttpHandler(req =>
+            {
+                seenUserAgent = req.Headers.UserAgent.ToString();
+                return new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(ReleaseJson)
+                };
+            })));
+
+        var info = await service.CheckAsync(new Version(1, 0, 0));
+
+        Assert.NotNull(info); // a 403 would surface as null — the exact bug this pins
+        Assert.False(string.IsNullOrWhiteSpace(seenUserAgent));
+        Assert.Contains("RobloxAccountManager", seenUserAgent);
+    }
+
+    [Fact]
+    public async Task WeaoClient_SendsUserAgent()
+    {
+        string? seenUserAgent = null;
+        var client = new RAM.Core.Roblox.Rdd.WeaoRddApiClient(
+            baseUrl: "https://weao.test",
+            useCache: false,
+            http: new HttpClient(new FakeHttpHandler(req =>
+            {
+                seenUserAgent = req.Headers.UserAgent.ToString();
+                return new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent("[]")
+                };
+            })));
+
+        await client.GetExploitsAsync();
+
+        Assert.Contains("RobloxAccountManager", seenUserAgent);
+    }
+
+    [Fact]
     public async Task CheckAsync_PrefersUpdateZipAsset_OverOtherAssets()
     {
         // Our releases carry Setup.exe + portable.zip + update.zip; the in-app updater must

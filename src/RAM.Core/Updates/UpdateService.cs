@@ -52,6 +52,7 @@ public sealed class UpdateService
     {
         ManifestUrl = (manifestUrl ?? DefaultManifestUrl).TrimEnd('/');
         _http = http ?? SharedHttp;
+        UserAgent.Apply(_http);
     }
 
     /// <summary>

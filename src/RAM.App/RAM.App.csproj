@@ -18,6 +18,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>12</LangVersion>
     <!--
+      The app version the About page shows and the in-app updater compares against
+      UpdateService.CheckAsync. MUST be bumped to match every release tag (v1.0.1 ->
+      1.0.1): a stale value makes updated installs re-prompt for the same update forever.
+      release.yml does not derive this from the tag automatically.
+    -->
+    <Version>1.0.0</Version>
+    <!--
       Default app-update release source, baked into UpdateService.DefaultManifestUrl as
       assembly metadata. CI (release.yml) overrides this with the fork's own releases API
       URL via -p:UpdateManifestUrl=...; local builds keep the upstream fallback (which

@@ -58,6 +58,12 @@ public partial class App : Application
     /// </summary>
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
+        // Single instance: a second launch (installer "Run now" + desktop shortcut, double
+        // click, …) must never run setup twice — it would race the RDD install root and
+        // last-writer-wins AccountData.json. Bounce it: signal the first window forward.
+        if (!SingleInstance.TryAcquire())
+            Environment.Exit(0);
+
         // A secondary activation of an already-running instance must not re-run setup:
         // reloading accounts into the repository would duplicate every entry.
         if (_window is not null)
@@ -85,6 +91,7 @@ public partial class App : Application
         var settings = new SettingsStore();
         var rootWindow = new MainWindow();
         _window = rootWindow;
+        InstanceWindow = rootWindow;
 
         var store = new AccountStore(notifier: new AccountNotifier(rootWindow));
         var fastFlags = new FastFlagStore();
@@ -98,7 +105,15 @@ public partial class App : Application
 
         // Cancel any in-flight background Default-client update when the window closes,
         // so no install is left half-written.
-        _window.Closed += (_, _) => services.ClientUpdater.Dispose();
+        rootWindow.Closed += (_, _) =>
+        {
+            services.ClientUpdater.Dispose();
+            SingleInstance.Release();
+        };
+
+        // First Default-client freshness check right at startup (the hourly timer only
+        // covers the rest of the session); fire-and-forget — the RDD page surfaces status.
+        _ = services.ClientUpdater.RunOnceAsync();
 
         // Password-locked files prompt for the password before accounts load.
         await services.UnlockAccountsAsync();

@@ -39,6 +39,7 @@ public sealed class WeaoRddApiClient
         BaseUrl = baseUrl.TrimEnd('/');
         // Shared client so repeated page visits don't churn sockets.
         _http = http ?? SharedHttp;
+        UserAgent.Apply(_http);
         _useCache = useCache;
         _cacheTtl = cacheTtl ?? DefaultCacheTtl;
     }

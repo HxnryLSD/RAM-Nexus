@@ -83,6 +83,13 @@ public sealed class AutoLockService
 
         // Unsigned subtraction survives the 32-bit TickCount wrap (~24.9 days uptime).
         uint idleMs = (uint)(Environment.TickCount - (int)info.dwTime);
+
+        // Right after boot, dwTime can sit ahead of TickCount's small counter and wrap into a
+        // huge value — that would instantly trip the idle-lock on an unlocked vault. A real
+        // idle gap can't exceed TickCount itself, so clamp anything absurd down to zero.
+        if (idleMs > (uint)Math.Max(Environment.TickCount, 0))
+            return 0;
+
         return (int)(idleMs / 1000);
     }
 
