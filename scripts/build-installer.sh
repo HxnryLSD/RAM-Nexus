@@ -12,22 +12,14 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ART="$ROOT/artifacts"
 
 # --- Code signing ------------------------------------------------------------
-# By default the binaries get an Authenticode signature from a self-signed
-# code-signing cert this script creates once and reuses (CurrentUser\My,
-# CN=Roblox Account Manager (Dev)). That gives an intact, verifiable
-# signature — but it does NOT clear SmartScreen: only a real CA-issued
-# code-signing cert does. To use one, set CERT_PFX and CERT_PASSWORD.
+# Optional: set CERT_PFX (+ CERT_PASSWORD) to Authenticode-sign the binaries with a
+# real CA-issued code-signing cert. Without them, binaries ship unsigned — which is
+# fine for community distribution (SmartScreen warning appears either way until the
+# file builds reputation).
 SIGNTOOL="$(ls -d "/c/Program Files (x86)/Windows Kits/10/bin/"*/x64/signtool.exe 2>/dev/null | sort -V | tail -1 || true)"
 SIGN_ARGS=()
 if [ -n "${SIGNTOOL:-}" ] && [ -n "${CERT_PFX:-}" ]; then
   SIGN_ARGS=("$SIGNTOOL" sign /f "$CERT_PFX" /p "${CERT_PASSWORD:-}" /fd SHA256)
-elif [ -n "${SIGNTOOL:-}" ]; then
-  TP="$(powershell -NoProfile -Command "Get-ChildItem Cert:\CurrentUser\My | Where-Object { \$_.Subject -eq 'CN=Roblox Account Manager (Dev)' -and \$_.HasPrivateKey } | Select-Object -First 1 -ExpandProperty Thumbprint")"
-  if [ -z "$TP" ]; then
-    echo "==> Creating self-signed code-signing cert (CN=Roblox Account Manager (Dev))"
-    TP="$(powershell -NoProfile -Command "\$c = New-SelfSignedCertificate -Type CodeSigningCert -Subject 'CN=Roblox Account Manager (Dev)' -FriendlyName 'Roblox Account Manager (Dev)' -KeyUsage DigitalSignature -CertStoreLocation Cert:\CurrentUser\My -NotAfter (Get-Date).AddYears(3); \$c.Thumbprint")"
-  fi
-  SIGN_ARGS=("$SIGNTOOL" sign /s my /sha1 "$TP" /fd SHA256)
 fi
 
 sign_file() {
