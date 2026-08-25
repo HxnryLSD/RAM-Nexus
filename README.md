@@ -56,7 +56,7 @@ src/
 ├── RAM.App           # WinUI 3 shell (NavigationView, custom title bar)
 │   ├── Views         # Accounts, Settings, Fast Flags, About
 │   └── Dialogs       # AddAccountDialog, UnlockDialog, PasswordDialog (password lock flow)
-└── RAM.Core.Tests    # xUnit — 95 tests (store, patcher, RDD, API, launcher, paths)
+└── RAM.Core.Tests    # xUnit — 125 tests (store, patcher, RDD, API, launcher, paths)
 ```
 
 Design rules:
