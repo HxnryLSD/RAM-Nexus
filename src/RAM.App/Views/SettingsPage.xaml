@@ -1,0 +1,59 @@
+<Page
+    x:Class="RAM.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ScrollViewer>
+        <StackPanel Padding="24" Spacing="16" MaxWidth="640" HorizontalAlignment="Left">
+            <TextBlock Text="Settings" Style="{StaticResource TitleTextBlockStyle}"/>
+
+            <TextBlock Text="Appearance" FontWeight="SemiBold" Margin="0,8,0,0"/>
+            <TextBlock Text="Window material (Mica / Acrylic) — frosted glass effect on Windows 11." Opacity="0.6" FontSize="12"/>
+            <ToggleSwitch x:Name="BackdropToggle" Header="Window material" OffContent="Off" OnContent="On"
+                          Toggled="BackdropToggle_Toggled"/>
+            <ComboBox x:Name="BackdropModeBox" Header="Mode" SelectionChanged="BackdropModeBox_SelectionChanged">
+                <ComboBoxItem Content="Mica"/>
+                <ComboBoxItem Content="Mica Alt"/>
+                <ComboBoxItem Content="Acrylic"/>
+                <ComboBoxItem Content="None"/>
+            </ComboBox>
+            <ToggleSwitch x:Name="BackdropTransparencyToggle" Header="Transparency (frosted glass)" OffContent="Off" OnContent="On"
+                          Toggled="BackdropTransparencyToggle_Toggled"/>
+
+            <TextBlock Text="Roblox" FontWeight="SemiBold" Margin="0,16,0,0"/>
+            <ToggleSwitch x:Name="UnlockFpsToggle" Header="Unlock FPS" OffContent="Off" OnContent="On"
+                          Toggled="UnlockFpsToggle_Toggled"/>
+            <NumberBox x:Name="MaxFpsBox" Header="Max FPS" Minimum="30" Maximum="1000"
+                       ValueChanged="MaxFpsBox_ValueChanged"/>
+            <TextBlock Text="Keeps the Default install on the latest Roblox build — checks at launch and hourly, re-applies fast flags + FPS unlock after each update." Opacity="0.6" FontSize="12"/>
+            <ToggleSwitch x:Name="AutoUpdateClientToggle" Header="Auto-update Default client" OffContent="Off" OnContent="On"
+                          Toggled="AutoUpdateClientToggle_Toggled"/>
+
+            <TextBlock Text="Security" FontWeight="SemiBold" Margin="0,16,0,0"/>
+            <TextBlock x:Name="EncryptionStatus" Opacity="0.8" FontSize="12"/>
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <Button x:Name="SetPasswordButton" Click="SetPassword_Click"/>
+                <Button x:Name="RemovePasswordButton" Click="RemovePassword_Click"/>
+                <Button x:Name="LockNowButton" Content="Lock now" Click="LockNow_Click"/>
+            </StackPanel>
+
+            <TextBlock Text="Auto-lock" FontWeight="SemiBold" Margin="0,16,0,0"/>
+            <TextBlock Text="Re-lock the vault automatically after inactivity or when minimized — Bitwarden-style." Opacity="0.6" FontSize="12"/>
+            <ToggleSwitch x:Name="AutoLockToggle" Header="Auto-lock vault" OffContent="Off" OnContent="On"
+                          Toggled="AutoLockToggle_Toggled"/>
+            <ComboBox x:Name="AutoLockTimeoutBox" Header="Timeout" SelectionChanged="AutoLockTimeoutBox_SelectionChanged">
+                <ComboBoxItem Content="1 minute"/>
+                <ComboBoxItem Content="5 minutes"/>
+                <ComboBoxItem Content="10 minutes"/>
+                <ComboBoxItem Content="15 minutes"/>
+                <ComboBoxItem Content="30 minutes"/>
+                <ComboBoxItem Content="1 hour"/>
+                <ComboBoxItem Content="4 hours"/>
+            </ComboBox>
+            <ToggleSwitch x:Name="AutoLockMinimizeToggle" Header="Lock on minimize" OffContent="Off" OnContent="On"
+                          Toggled="AutoLockMinimizeToggle_Toggled"/>
+            <ToggleSwitch x:Name="AutoLockIdleToggle" Header="Lock when idle" OffContent="Off" OnContent="On"
+                          Toggled="AutoLockIdleToggle_Toggled"/>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

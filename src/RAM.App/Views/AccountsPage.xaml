@@ -1,0 +1,101 @@
+<Page
+    x:Class="RAM.Views.AccountsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="using:RAM.Core.Models">
+    <Page.Resources>
+        <DataTemplate x:Key="AccountTemplate" x:DataType="models:Account">
+            <Grid Padding="4,4,4,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Border Width="40" Height="40" CornerRadius="20"
+                        Background="Gray" Opacity="0.5" VerticalAlignment="Center">
+                    <TextBlock Text="{x:Bind DisplayName, Mode=OneTime}"
+                               Foreground="White" FontSize="16"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel Grid.Column="1" Margin="12,0" VerticalAlignment="Center" Spacing="2">
+                    <TextBlock Text="{x:Bind DisplayName, Mode=OneTime}" FontWeight="SemiBold"/>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="{x:Bind Group, Mode=OneTime}" Opacity="0.6" FontSize="12"/>
+                        <FontIcon Glyph="&#xE72E;" FontSize="10" Opacity="0.5" VerticalAlignment="Center"
+                                  Visibility="{x:Bind HasStoredPassword, Mode=OneTime}"
+                                  ToolTipService.ToolTip="Stored password"/>
+                        <FontIcon Glyph="&#xE70B;" FontSize="10" Opacity="0.5" VerticalAlignment="Center"
+                                  Visibility="{x:Bind HasNotes, Mode=OneTime}"
+                                  ToolTipService.ToolTip="Notes"/>
+                    </StackPanel>
+                </StackPanel>
+                <TextBlock Grid.Column="2" Text="{x:Bind UserID, Mode=OneTime}" Opacity="0.4"
+                           VerticalAlignment="Center" FontSize="12"/>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid Padding="20" RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <SplitButton x:Name="LaunchButton" Click="Launch_Click" IsEnabled="False">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <FontIcon Glyph="&#xE768;" FontSize="12"/>
+                    <TextBlock Text="Launch"/>
+                </StackPanel>
+                <SplitButton.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="Launch with Place ID…" Click="LaunchWithPlaceId_Click"/>
+                    </MenuFlyout>
+                </SplitButton.Flyout>
+            </SplitButton>
+            <Button Content="Add account" Click="AddAccount_Click"/>
+            <Button x:Name="RemoveAccountButton" Content="Remove account" Click="RemoveAccount_Click" IsEnabled="False"/>
+            <Button Content="Save accounts" Click="Save_Click"/>
+            <Button Content="Vault">
+                <Button.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="Export encrypted backup…" Click="ExportVault_Click"/>
+                        <MenuFlyoutItem Text="Import from backup…" Click="ImportVault_Click"/>
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+            <TextBox x:Name="SearchBox" PlaceholderText="Search accounts…" Width="200"
+                     VerticalAlignment="Center" TextChanged="SearchBox_TextChanged"/>
+            <TextBlock x:Name="StatusText" VerticalAlignment="Center" Opacity="0.6"/>
+        </StackPanel>
+
+        <!-- Group filter chips — click a group to filter, click again (or All) to clear. -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8" Margin="0,0,0,4">
+            <ToggleButton x:Name="AllGroupsChip" Content="All" IsChecked="True" Padding="10,4"
+                          Click="AllGroupsChip_Click"/>
+            <ItemsControl x:Name="GroupChipsHost" ItemsSource="{x:Bind GroupChips}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="8"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ToggleButton Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                      Padding="10,4" Click="GroupChip_Click"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+
+        <ListView
+            x:Name="AccountsList"
+            Grid.Row="2"
+            ItemsSource="{x:Bind FilteredAccounts}"
+            ItemTemplate="{StaticResource AccountTemplate}"
+            SelectionMode="Single"
+            SelectionChanged="AccountsList_SelectionChanged"
+            DoubleTapped="AccountsList_DoubleTapped"/>
+    </Grid>
+</Page>

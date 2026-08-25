@@ -1,0 +1,16 @@
+<Application x:Class="RAM.Installer.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Application.Resources>
+        <!-- Dark, modern (Win11-flavored) palette shared by all installer surfaces. -->
+        <SolidColorBrush x:Key="BgBrush" Color="#FF202026" />
+        <SolidColorBrush x:Key="PanelBrush" Color="#FF2A2A31" />
+        <SolidColorBrush x:Key="PanelHoverBrush" Color="#FF303039" />
+        <SolidColorBrush x:Key="AccentBrush" Color="#FF2E8BFF" />
+        <SolidColorBrush x:Key="AccentHoverBrush" Color="#FF4A9CFF" />
+        <SolidColorBrush x:Key="TextBrush" Color="#FFF2F2F2" />
+        <SolidColorBrush x:Key="MutedBrush" Color="#FF9AA0A6" />
+        <SolidColorBrush x:Key="DangerBrush" Color="#FFFF7B72" />
+        <SolidColorBrush x:Key="BorderBrush" Color="#FF3C3C44" />
+    </Application.Resources>
+</Application>

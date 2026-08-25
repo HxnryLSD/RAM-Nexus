@@ -1,0 +1,30 @@
+# Continuous integration: build the WinUI app and run the RAM.Core test suite on every
+# push/PR, so a regression fails here instead of in the release pipeline (release.yml).
+name: "CI"
+
+on:
+  push:
+    branches:
+      - "master"
+      - "main"
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Build (WinUI app, x64)
+        run: dotnet build src/RAM.App/RAM.App.csproj -c Release -p:Platform=x64
+
+      - name: Test (RAM.Core)
+        run: dotnet test src/RAM.Core.Tests/RAM.Core.Tests.csproj -c Release

@@ -1,0 +1,23 @@
+<Page
+    x:Class="RAM.Views.AboutPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <StackPanel Padding="24" Spacing="8" MaxWidth="640" HorizontalAlignment="Left">
+        <TextBlock Text="Roblox Account Manager" Style="{StaticResource TitleTextBlockStyle}"/>
+        <TextBlock Text="WinUI 3 redesign" Opacity="0.7"/>
+        <TextBlock Text="A modern rebuild of the classic multi-account manager, migrated from WinForms to Windows App SDK / WinUI 3." 
+                   TextWrapping="Wrap" Margin="0,12,0,0"/>
+        <TextBlock x:Name="VersionText" Opacity="0.6" FontSize="12"/>
+
+        <TextBlock Text="Updates" FontWeight="SemiBold" Margin="0,24,0,0"/>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <Button x:Name="CheckButton" Content="Check for updates" Click="CheckButton_Click"/>
+            <Button x:Name="DownloadButton" Content="Download update" Click="DownloadButton_Click" IsEnabled="False"/>
+            <Button x:Name="RestartButton" Content="Restart &amp; install" Click="RestartButton_Click" IsEnabled="False"/>
+            <Button x:Name="CancelUpdateButton" Content="Cancel" Click="CancelUpdateButton_Click" Visibility="Collapsed"/>
+            <ProgressBar x:Name="UpdateProgress" Width="200" VerticalAlignment="Center" Visibility="Collapsed" IsIndeterminate="True"/>
+        </StackPanel>
+        <TextBlock x:Name="UpdateStatus" TextWrapping="Wrap" Opacity="0.8"/>
+    </StackPanel>
+</Page>

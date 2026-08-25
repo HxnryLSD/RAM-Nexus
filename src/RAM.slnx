@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="RAM.App/RAM.App.csproj" />
+  <Project Path="RAM.Core.Tests/RAM.Core.Tests.csproj" />
+  <Project Path="RAM.Core/RAM.Core.csproj" />
+  <Project Path="RAM.Installer/RAM.Installer.csproj" />
+</Solution>

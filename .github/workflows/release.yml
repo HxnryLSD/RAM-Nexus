@@ -1,0 +1,57 @@
+# Builds the offline installer, portable ZIP and in-app update ZIP on Windows and attaches
+# them to a GitHub release — the release pipeline behind the About page's auto-update.
+#
+#   Release a new version:  push a tag  v1.2.3  (or run the workflow manually with a tag).
+#
+# The build runs the same scripts/build-installer.sh pipeline used locally, with one
+# addition: UPDATE_MANIFEST_URL bakes this repo's releases API URL into the app, so
+# UpdateService.DefaultManifestUrl (About → Check for updates) points at exactly the
+# release this workflow publishes.
+name: "Release"
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to build and publish (e.g. v1.2.3)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Build installer, portable zip and update zip
+        env:
+          UPDATE_MANIFEST_URL: "https://api.github.com/repos/${{ github.repository }}/releases/latest"
+        run: bash scripts/build-installer.sh
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          TAG="${{ github.event_name == 'push' && github.ref_name || inputs.tag }}"
+          ASSETS=(
+            "$GITHUB_WORKSPACE/artifacts/RobloxAccountManager-Setup.exe"
+            "$GITHUB_WORKSPACE/artifacts/RobloxAccountManager-portable.zip"
+            "$GITHUB_WORKSPACE/artifacts/RobloxAccountManager-update.zip"
+          )
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${ASSETS[@]}" --clobber
+          else
+            gh release create "$TAG" "${ASSETS[@]}" --title "$TAG" --generate-notes
+          fi

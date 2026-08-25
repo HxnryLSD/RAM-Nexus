@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>RAM</RootNamespace>
+    <AssemblyName>Roblox Account Manager</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- Embedded as the exe icon; also copied to output for the titlebar (AppWindow.SetIcon). -->
+    <ApplicationIcon>Assets\ram.ico</ApplicationIcon>
+    <Platforms>x64</Platforms>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <UseWinUI>true</UseWinUI>
+    <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <WindowsSdkPackageVersion>10.0.19041.44</WindowsSdkPackageVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>12</LangVersion>
+    <!--
+      Default app-update release source, baked into UpdateService.DefaultManifestUrl as
+      assembly metadata. CI (release.yml) overrides this with the fork's own releases API
+      URL via -p:UpdateManifestUrl=...; local builds keep the upstream fallback (which
+      publishes no built releases, so the check harmlessly reports "no update"). Can be
+      overridden at runtime with the UpdateManifestUrl setting.
+    -->
+    <UpdateManifestUrl Condition="'$(UpdateManifestUrl)' == ''">https://api.github.com/repos/ic3w0lf22/Roblox-Account-Manager/releases/latest</UpdateManifestUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260710003" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4654" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RAM.Core\RAM.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <AssemblyMetadata Include="UpdateManifestUrl" Value="$(UpdateManifestUrl)" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\ram.ico" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

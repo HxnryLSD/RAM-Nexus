@@ -1,0 +1,60 @@
+<ContentDialog
+    x:Class="RAM.Dialogs.AddAccountDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Add account"
+    PrimaryButtonText="Add"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary">
+
+    <StackPanel Spacing="12" MinWidth="420">
+        <ComboBox x:Name="MethodSelector" SelectedIndex="0">
+            <ComboBoxItem Content="Paste a cookie"/>
+            <ComboBoxItem Content="Username &amp; password"/>
+            <ComboBoxItem Content="Bulk cookies"/>
+        </ComboBox>
+
+        <!-- Method: paste a single cookie -->
+        <StackPanel x:Name="CookiePanel" Spacing="8">
+            <TextBox x:Name="CookieBox" Header=".ROBLOSECURITY cookie"
+                     PlaceholderText="_|WARNING:-DO-NOT-SHARE-..." AcceptsReturn="False" FontFamily="Consolas"/>
+            <TextBlock Text="Paste the full cookie value (including the _|WARNING prefix) or just the token."
+                       FontSize="11" Opacity="0.55" TextWrapping="Wrap"/>
+            <TextBox x:Name="UsernameBox" Header="Username (optional)"
+                     PlaceholderText="Fetched from Roblox automatically if left empty"/>
+        </StackPanel>
+
+        <!-- Method: sign in with username + password -->
+        <StackPanel x:Name="PasswordPanel" Visibility="Collapsed" Spacing="8">
+            <TextBox x:Name="LoginUsernameBox" Header="Username"/>
+            <PasswordBox x:Name="LoginPasswordBox" Header="Password"/>
+            <Button x:Name="SignInButton" Content="Sign in" Click="SignIn_Click" HorizontalAlignment="Left"/>
+            <TextBlock x:Name="SignInStatus" FontSize="12" TextWrapping="Wrap"/>
+            <Button x:Name="CopyErrorButton" Content="Copy error details" Click="CopyError_Click"
+                    Visibility="Collapsed" HorizontalAlignment="Left"/>
+
+            <!-- Browser fallback (port of legacy RAM's browser login): when Roblox gates the
+                 API login with a CAPTCHA / 2SV, the user finishes it by hand in this embedded
+                 WebView2 and the .ROBLOSECURITY cookie is captured automatically. -->
+            <TextBlock x:Name="BrowserLoginHint"
+                       Text="Complete the CAPTCHA or verification in the browser below — your account cookie is captured automatically once you're signed in."
+                       FontSize="11" Opacity="0.55" TextWrapping="Wrap" Visibility="Collapsed"/>
+            <Grid x:Name="BrowserLoginHost" Height="340" Visibility="Collapsed">
+                <WebView2 x:Name="LoginWebView"/>
+            </Grid>
+            <Button x:Name="CancelBrowserButton" Content="Cancel browser sign-in" Click="CancelBrowser_Click"
+                    Visibility="Collapsed" HorizontalAlignment="Left"/>
+        </StackPanel>
+
+        <!-- Method: paste many cookies at once -->
+        <StackPanel x:Name="BulkPanel" Visibility="Collapsed" Spacing="8">
+            <TextBox x:Name="BulkBox" Header="Cookies (one per line)" AcceptsReturn="True" Height="150"
+                     TextWrapping="NoWrap" FontFamily="Consolas"
+                     PlaceholderText="Paste one .ROBLOSECURITY cookie per line"/>
+            <TextBlock Text="Usernames are fetched from Roblox after the accounts are added."
+                       FontSize="11" Opacity="0.55" TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <TextBlock x:Name="ErrorText" Foreground="#FF7B72" FontSize="12" TextWrapping="Wrap" Visibility="Collapsed"/>
+    </StackPanel>
+</ContentDialog>

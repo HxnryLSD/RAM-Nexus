@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+
+<!--
+    rdd - https://github.com/latte-soft/rdd
+
+    Copyright (C) 2024-2024 Latte Softworks <latte.to> | MIT License
+-->
+
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WEAO - RDD</title>
+    <link rel="icon" href="favicon.svg">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="stack">
+        <div class="hdr no-select">
+            <p>RDD - "Roblox Deployment Downloader" &#40;<a target="_blank" href="https://github.com/latte-soft/rdd">GitHub Repository</a>&#41;<br>Copyright (c) 2024-2025 Latte Softworks <a target="_blank" href="https://latte.to">&lt;latte.to&gt;</a> | <a target="_blank" href="https://github.com/latte-soft/rdd/blob/master/LICENSE">MIT License</a></p>
+            <div class="notice">
+                <p><svg class="notice-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> This is an unofficial fork of RDD, maintained independently by <a target="_blank" href="https://whatexpsare.online" class="brand">What<span class="exps">Exps</span>Are.<span class="online">Online</span></a>. Trusted domains: rdd.whatexpsare.online, rdd.weao.gg, rdd.weao.xyz. Questions? <a target="_blank" href="https://discord.gg/weaoxyz">Join our Discord</a>.</p>
+            </div>
+        </div>
+
+        <noscript><p>&#40;This site doesn't work without JavaScript Enabled!&#41;</p></noscript>
+
+        <div hidden id="formDiv">
+            <form id="form" target="_blank" action="">
+                <div class="fgrid">
+                    <label>Binary Type</label>
+                    <div class="drop" id="binDrop">
+                        <button type="button" class="drop-btn" aria-haspopup="listbox" aria-expanded="false">
+                            <span class="drop-val">WindowsPlayer</span>
+                            <svg class="drop-arrow" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                        <div class="drop-menu" role="listbox">
+                            <div class="drop-item selected" data-value="WindowsPlayer">WindowsPlayer</div>
+                            <div class="drop-item" data-value="WindowsStudio64">WindowsStudio64</div>
+                            <div class="drop-item" data-value="MacPlayer">MacPlayer</div>
+                            <div class="drop-item" data-value="MacStudio">MacStudio</div>
+                        </div>
+                        <select id="binaryType" name="binaryType" hidden>
+                            <option value="WindowsPlayer" selected>WindowsPlayer</option>
+                            <option value="WindowsStudio64">WindowsStudio64</option>
+                            <option value="MacPlayer">MacPlayer</option>
+                            <option value="MacStudio">MacStudio</option>
+                        </select>
+                    </div>
+
+                    <label for="channel">Channel</label>
+                    <input id="channel" name="channel" type="text" placeholder="LIVE">
+
+                    <label for="version" id="versionLabel">Version Hash</label>
+                    <div class="frow" id="versionRow">
+                        <input id="version" name="version" type="text">
+                        <span class="hint">Optional</span>
+                    </div>
+
+                    <label id="exploitLabel">Exploit</label>
+                    <div id="exploitWrap">
+                        <div id="exploitPills" class="ex-pills">
+                            <span class="ex-hint">Loading…</span>
+                        </div>
+                        <div id="exploitChosen" class="ex-chosen" style="display:none">
+                            <div class="ex-pick">
+                                <img id="exploitChosenLogo" class="ex-logo" src="" alt="" style="display:none">
+                                <span id="exploitChosenName"></span>
+                                <button type="button" class="ex-clear" onclick="clearExploit();">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sep"></div><div class="sep"></div>
+
+                    <label for="compressZip" data-tooltip="Reduces zip size but takes longer to download">Compress Zip</label>
+                    <input id="compressZip" name="compressZip" type="checkbox">
+
+                    <label for="compressionLevel" id="compLabel" style="display:none">Compression Level</label>
+                    <div class="frow" id="compRow" style="display:none">
+                        <input id="compressionLevel" name="compressionLevel" type="range" min="1" max="9" value="1">
+                        <span class="hint" id="compVal">1</span>
+                    </div>
+
+                    <label for="includeLauncher" data-tooltip="Lets you launch directly from Roblox or private servers">Include Launcher</label>
+                    <input id="includeLauncher" name="includeLauncher" type="checkbox" checked>
+
+                    <label for="parallelDownloads" data-tooltip="Downloads multiple files at once, faster with good internet">Parallel Downloads</label>
+                    <input id="parallelDownloads" name="parallelDownloads" type="checkbox" checked>
+                </div>
+
+                <div class="fbtns">
+                    <button id="btnLatest" type="button" onclick="dlLatest();">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Download Latest
+                    </button>
+                    <button id="btnPrev" type="button" onclick="dlPrev();">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                        Download Previous
+                    </button>
+                    <button id="btnSpecified" type="button" onclick="dlHash();">Download Specified</button>
+                    <button id="btnCopy" type="button" onclick="copyLink(this);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        Copy Link
+                    </button>
+                    <button id="btnWeblauncher" type="button" onclick="window.open('https://github.com/vnnaworks/weblauncher/releases/download/2.1.5/weblauncher.exe', '_blank', 'noopener,noreferrer');">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Download WebLauncher
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div hidden id="usageDiv" class="usage no-select">
+            <p class="u-title">Usage</p>
+            <ul>
+                <li>Select a <strong>Binary Type</strong> and optionally enter a <strong>Channel</strong> (defaults to <code>LIVE</code>).</li>
+                <li>Leave <strong>Version Hash</strong> empty to grab the latest, or paste a specific hash.</li>
+                <li><strong>Compress Zip:</strong> This will reduce the size of the zip file, but it will take longer to download.</li>
+                <li><strong>Download Latest:</strong> Fetches the current live build.</li>
+                <li><strong>Download Previous:</strong> Fetches the previous build (downgrade).</li>
+                <li><strong>Copy Link:</strong> Copies a direct URL for the selected config.</li>
+                <li><strong>Download WebLauncher:</strong> Downloads the latest WEAO WebLauncher executable.</li>
+                <li>Enable <strong>Include Launcher:</strong> To launch directly from Roblox / private servers.</li>
+            </ul>
+            <p class="u-note">Direct url params: <code>?channel=&lt;NAME&gt;&amp;binaryType=&lt;TYPE&gt;&amp;version=&lt;HASH&gt;</code></p>
+        </div>
+    </div>
+
+    <div id="exModal" class="ex-modal" style="display:none">
+        <div class="ex-modal-card">
+            <p class="ex-modal-title" id="exModalTitle"></p>
+            <p class="ex-modal-msg" id="exModalMsg"></p>
+            <button type="button" class="ex-modal-ok" id="exModalOk">OK, got it</button>
+        </div>
+    </div>
+
+    <div id="logBox"></div>
+    <div id="progWrap">
+        <div class="phdr">
+            <span id="progMsg"></span>
+            <div class="pright">
+                <span id="progEta"></span>
+                <span id="progPct">0%</span>
+            </div>
+        </div>
+        <div class="ptrack">
+            <div id="progFill"></div>
+        </div>
+    </div>
+<!-- Cloudflare Pages Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "65e9234799164abeaf0d6c05490c6037"}'></script><!-- Cloudflare Pages Analytics --><script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a27a56bd0a4a99ed',t:'MTc4NjE0ODI1NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+<script src="js/jszip.min.js"></script>
+<script src="js/rdd.js?v=1"></script>
+<script>
+(function () {
+    const PLAT_ORDER = { wexecutor: 0, wexternal: 1, mexecutor: 2 };
+    const TYPES      = new Set(['wexecutor', 'wexternal', 'mexecutor']);
+    const STUDIOS    = new Set(['WindowsStudio64', 'MacStudio']);
+    const MAC        = new Set(['MacPlayer', 'MacStudio']);
+    const LIMIT      = 8;
+
+    const p = location.hostname.split('.');
+    p.shift();
+    const base = `${location.protocol}//${p.join('.')}`;
+
+    const MODAL_COPY = {
+        stale: {
+            title: 'Outdated Exploit',
+            msg:   'This exploit requires the previous version of Roblox, it is currently outdated. It may still work, but if you receive Error Code 280 while joining a game, that version has been blocklisted by Roblox.',
+        },
+        old: {
+            title: 'Very Outdated Exploit',
+            msg:   'This exploit supports a version older than the previous Roblox release. Downgrading to it is unlikely to work right now, but you can still try. If you receive Error Code 280 while joining a game, that version has been blocklisted by Roblox.',
+        },
+    };
+
+    function showExModal(status, cb) {
+        const c = MODAL_COPY[status];
+        document.getElementById('exModalTitle').textContent = c.title;
+        document.getElementById('exModalMsg').textContent   = c.msg;
+        const modal = document.getElementById('exModal');
+        const ok    = document.getElementById('exModalOk');
+        modal.classList.remove('closing');
+        modal.style.display = 'flex';
+        const close = (then) => {
+            modal.classList.add('closing');
+            modal.addEventListener('animationend', () => {
+                modal.style.display = 'none';
+                modal.classList.remove('closing');
+                then?.();
+            }, { once: true });
+            ok.removeEventListener('click', onOk);
+        };
+        const onOk = () => close(cb);
+        ok.addEventListener('click', onOk);
+        modal.addEventListener('click', e => { if (e.target === modal) close(); }, { once: true });
+    }
+
+    Promise.all([
+        fetch(`${base}/api/status/exploits`).then(r => r.json()),
+        fetch(`${base}/api/versions/current`).then(r => r.json()).catch(() => null),
+        fetch(`${base}/api/versions/past`).then(r => r.json()).catch(() => null),
+    ]).then(([data, curr, past]) => {
+            const wrap = document.getElementById('exploitPills');
+            wrap.innerHTML = '';
+
+            const list = data
+                .filter(e => !e.hidden && TYPES.has(e.extype))
+                .sort((a, b) => {
+                    const d = (PLAT_ORDER[a.extype] ?? 9) - (PLAT_ORDER[b.extype] ?? 9);
+                    return d !== 0 ? d : (a.index ?? 99) - (b.index ?? 99);
+                });
+
+            if (!list.length) {
+                wrap.innerHTML = '<span class="ex-hint">No exploits available</span>';
+                return;
+            }
+
+            function getStatus(e) {
+                const mac = e.platform === 'Mac';
+                const cv  = mac ? curr?.Mac : curr?.Windows;
+                const pv  = mac ? past?.Mac : past?.Windows;
+                if (!cv) return 'current';
+                if (e.rbxversion === cv) return 'current';
+                if (e.rbxversion === pv) return 'stale';
+                return 'old';
+            }
+
+            function collapse() {
+                wrap.querySelector('.ex-more')?.remove();
+                wrap.querySelectorAll('.ex-pill.collapsed').forEach(p => p.classList.remove('collapsed'));
+                const vis = Array.from(wrap.querySelectorAll('.ex-pill:not(.plat-hide)'));
+                if (vis.length <= LIMIT) return;
+                vis.slice(LIMIT).forEach(p => p.classList.add('collapsed'));
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'ex-more';
+                btn.textContent = `+${vis.length - LIMIT} more`;
+                btn.onclick = () => {
+                    wrap.querySelectorAll('.ex-pill.collapsed').forEach(p => p.classList.remove('collapsed'));
+                    btn.remove();
+                };
+                wrap.appendChild(btn);
+            }
+
+            window.filterPlatform = function(bt) {
+                const studio = STUDIOS.has(bt);
+                const mac    = MAC.has(bt);
+                document.getElementById('exploitLabel').style.display = studio ? 'none' : '';
+                document.getElementById('exploitWrap').style.display  = studio ? 'none' : '';
+                if (studio) window.clearExploit?.();
+                const hint = document.querySelector('#versionRow .hint');
+                if (hint) {
+                    hint.textContent      = studio ? 'Required' : 'Optional';
+                    hint.style.color      = studio ? 'rgba(236,59,71,0.65)' : '';
+                    hint.style.fontWeight = studio ? '500' : '';
+                }
+                wrap.querySelectorAll('.ex-pill').forEach(p => {
+                    p.classList.toggle('plat-hide', mac ? p.dataset.platform !== 'Mac' : p.dataset.platform === 'Mac');
+                });
+                collapse();
+            };
+
+            window._exps = list;
+
+            list.forEach(e => {
+                const pill   = document.createElement('button');
+                const status = getStatus(e);
+                const logo   = e.slug?.logo;
+                pill.type = 'button';
+                pill.className = 'ex-pill' + (status !== 'current' ? ` ex-pill--${status}` : '');
+                pill.dataset.extype    = e.extype;
+                pill.dataset.platform  = e.platform || '';
+                if (logo?.trim()) {
+                    const img = document.createElement('img');
+                    img.src = logo; img.className = 'ex-logo'; img.alt = '';
+                    img.onerror = () => img.remove();
+                    pill.appendChild(img);
+                }
+                const span = document.createElement('span');
+                span.textContent = e.title;
+                pill.appendChild(span);
+                pill.onclick = () => {
+                    const go = () => window.selectExploit(e, logo);
+                    status !== 'current' ? showExModal(status, go) : go();
+                };
+                wrap.appendChild(pill);
+            });
+
+            window.filterPlatform(document.getElementById('binaryType').value);
+
+            let saved = null;
+            try { saved = localStorage.getItem('lastExploit'); } catch(_) {}
+
+            if (new URLSearchParams(location.search).get('exploit')) {
+                window._autoSelect?.();
+            } else if (saved) {
+                const m = list.find(e => e.title === saved);
+                if (m) window.selectExploit(m, m.slug?.logo || '');
+            }
+        })
+        .catch(() => {
+            document.getElementById('exploitPills').innerHTML = '<span class="ex-hint">Failed to load exploits</span>';
+        });
+
+    window.selectExploit = function(e, logo) {
+        try { localStorage.setItem('lastExploit', e.title); } catch(_) {}
+        document.getElementById('version').value = e.rbxversion || '';
+        document.getElementById('versionLabel').style.display = 'none';
+        document.getElementById('versionRow').style.display = 'none';
+        document.getElementById('exploitPills').style.display = 'none';
+        const img = document.getElementById('exploitChosenLogo');
+        img.style.display = logo?.trim() ? '' : 'none';
+        if (logo?.trim()) img.src = logo;
+        document.getElementById('exploitChosenName').textContent = e.title;
+        document.getElementById('exploitChosen').style.display = 'flex';
+        const spec = document.getElementById('btnSpecified');
+        if (spec) spec.textContent = 'Download ' + (e.rbxversion || e.title);
+        document.getElementById('btnLatest').style.display = 'none';
+        document.getElementById('btnPrev').style.display   = 'none';
+    };
+
+    window.clearExploit = function() {
+        document.getElementById('version').value = '';
+        document.getElementById('versionLabel').style.display = '';
+        document.getElementById('versionRow').style.display = '';
+        document.getElementById('exploitPills').style.display = '';
+        document.getElementById('exploitChosen').style.display = 'none';
+        document.getElementById('exploitChosenName').textContent = '';
+        try { localStorage.removeItem('lastExploit'); } catch(_) {}
+        const spec = document.getElementById('btnSpecified');
+        if (spec) spec.textContent = 'Download Specified';
+        const bt = document.querySelector('#binDrop select')?.value;
+        if (!STUDIOS.has(bt)) {
+            document.getElementById('btnLatest').style.display = '';
+            document.getElementById('btnPrev').style.display   = '';
+        }
+    };
+
+    if (typeof getLink === 'function') {
+        const _orig = getLink;
+        window.getLink = function() {
+            let url = _orig();
+            const name = document.getElementById('exploitChosenName').textContent;
+            if (name) {
+                url = url.replace(/[&?]version=[^&]*/g, '');
+                url += '&exploit=' + encodeURIComponent(name);
+            }
+            return url;
+        };
+    }
+
+    window._exps = [];
+    window._autoSelect = function() {
+        const param = new URLSearchParams(location.search).get('exploit');
+        if (!param) return;
+        const m = window._exps.find(e => e.title.toLowerCase() === param.toLowerCase());
+        if (m) window.selectExploit(m, m.slug?.logo || '');
+    };
+})();
+
+(function () {
+    const cbCompress  = document.getElementById('compressZip');
+    const compLabel   = document.getElementById('compLabel');
+    const compRow     = document.getElementById('compRow');
+    const compSlider  = document.getElementById('compressionLevel');
+    const compVal     = document.getElementById('compVal');
+
+    function toggleCompress() {
+        const show = cbCompress.checked;
+        compLabel.style.display = show ? '' : 'none';
+        compRow.style.display   = show ? '' : 'none';
+    }
+    cbCompress.addEventListener('change', toggleCompress);
+    compSlider.addEventListener('input', () => { compVal.textContent = compSlider.value; });
+
+    const drop      = document.getElementById('binDrop');
+    const btn       = drop.querySelector('.drop-btn');
+    const val       = drop.querySelector('.drop-val');
+    const sel       = drop.querySelector('select');
+    const items     = drop.querySelectorAll('.drop-item');
+    const btnLatest = document.getElementById('btnLatest');
+    const btnPrev   = document.getElementById('btnPrev');
+
+    const studioTypes = new Set(['WindowsStudio64', 'MacStudio']);
+
+    function syncVerBtns(value) {
+        const hide = studioTypes.has(value);
+        btnLatest.style.display = hide ? 'none' : '';
+        btnPrev.style.display   = hide ? 'none' : '';
+    }
+
+    btn.addEventListener('click', e => {
+        e.stopPropagation();
+        drop.classList.toggle('open');
+        btn.setAttribute('aria-expanded', drop.classList.contains('open'));
+    });
+
+    items.forEach(item => {
+        item.addEventListener('click', () => {
+            items.forEach(i => i.classList.remove('selected'));
+            item.classList.add('selected');
+            val.textContent = item.dataset.value;
+            sel.value = item.dataset.value;
+            drop.classList.remove('open');
+            btn.setAttribute('aria-expanded', 'false');
+            syncVerBtns(item.dataset.value);
+            window.filterPlatform?.(item.dataset.value);
+        });
+    });
+
+    document.addEventListener('click', () => {
+        drop.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+    });
+})();
+</script>
+</html>
