@@ -1,0 +1,50 @@
+name: Bug report
+description: Report something broken in RAM-Nexus
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing! **Attach `%LOCALAPPDATA%\Roblox Account Manager\crash.log` if it exists** — it makes bugs 10x faster to fix.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Accounts (add / launch / vault)
+        - RDD installs / downloads
+        - Fast Flags / FPS unlock
+        - Auto-update
+        - Settings / UI
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, what actually happened.
+    validations:
+      required: true
+  - type: textarea
+    id: crash-log
+    attributes:
+      label: crash.log
+      description: Paste the relevant tail of %LOCALAPPDATA%\Roblox Account Manager\crash.log (or write "none")
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: app-version
+    attributes:
+      label: RAM version
+      description: About page → version number
+    validations:
+      required: true
+  - type: input
+    id: os-version
+    attributes:
+      label: Windows version
+      placeholder: "e.g. Windows 11 24H2 (26100)"
+    validations:
+      required: true

@@ -1,0 +1,26 @@
+name: Feature request
+description: Suggest a feature (upstream parity or new)
+labels: [enhancement]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - Missing from old RAM (ic3w0lf22 upstream)
+        - New idea
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / use case
+      description: What are you trying to do that RAM-Nexus can't?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+    validations:
+      required: false
